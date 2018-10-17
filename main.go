@@ -10,7 +10,9 @@ func main() {
 		usage()
 	}
 	if args[0] == "server" {
-		server()
+		s := NewServer()
+		s.OnDemandAddrAlloc(8000, 4)
+		s.Start()
 	} else if args[0] == "client" {
 		client()
 	} else if args[0] == "proxy" {
