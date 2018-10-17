@@ -7,7 +7,7 @@ import (
 )
 
 // Client start point
-func Client() {
+func client() {
 	fmt.Println("TunnelMe Client")
 	ctrlConn, _ := net.Dial("tcp", "127.0.0.1:9001")
 	remoteAddress, _ := bufio.NewReader(ctrlConn).ReadString('\n')
@@ -20,6 +20,6 @@ func Client() {
 		fmt.Fprintf(dataConn, id)
 		serviceConn, _ := net.Dial("tcp", "127.0.0.1:3306")
 		fmt.Println("C: Piping")
-		go Pipe(dataConn, serviceConn)
+		go pipe(dataConn, serviceConn)
 	}
 }

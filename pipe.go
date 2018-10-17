@@ -2,11 +2,9 @@ package main
 
 import "net"
 
-// Pipe Connections
-func Pipe(conn1 net.Conn, conn2 net.Conn) {
-	chan1 := chanFromConn(conn1)
-	chan2 := chanFromConn(conn2)
-
+func pipe(conn1 net.Conn, conn2 net.Conn) {
+	chan1 := getChannel(conn1)
+	chan2 := getChannel(conn2)
 	for {
 		select {
 		case b1 := <-chan1:
@@ -23,12 +21,10 @@ func Pipe(conn1 net.Conn, conn2 net.Conn) {
 	}
 }
 
-func chanFromConn(conn net.Conn) chan []byte {
+func getChannel(conn net.Conn) chan []byte {
 	c := make(chan []byte)
-
 	go func() {
 		b := make([]byte, 1024)
-
 		for {
 			n, err := conn.Read(b)
 			if n > 0 {
@@ -42,6 +38,5 @@ func chanFromConn(conn net.Conn) chan []byte {
 			}
 		}
 	}()
-
 	return c
 }

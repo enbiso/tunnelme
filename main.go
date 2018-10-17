@@ -10,9 +10,11 @@ func main() {
 		usage()
 	}
 	if args[0] == "server" {
-		Server()
+		server()
 	} else if args[0] == "client" {
-		Client()
+		client()
+	} else if args[0] == "proxy" {
+		proxy(":80", ":90")
 	} else {
 		usage()
 	}
@@ -21,5 +23,6 @@ func main() {
 func usage() {
 	log("Usage: tunnelme server (options)")
 	log("Usage: tunnelme client (options)")
+	log("Usage: tunnelme proxy (options)")
 	os.Exit(-1)
 }

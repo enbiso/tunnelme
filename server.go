@@ -8,8 +8,7 @@ import (
 	"time"
 )
 
-// Server start point
-func Server() {
+func server() {
 
 	remoteStartPort := 8000
 
@@ -52,7 +51,7 @@ func Server() {
 				dataConn := dataConns[id]
 
 				fmt.Println("S: Piping")
-				go Pipe(clientConn, dataConn)
+				go pipe(clientConn, dataConn)
 			}
 		}()
 	}
