@@ -14,18 +14,26 @@ var proxyCmd = &cobra.Command{
 	Short: "Execute tunneling proxy",
 	Long:  "Excute a simple proxy to tunnel the service via a different port",
 	Run: func(cmd *cobra.Command, args []string) {
-		proxy(":80", ":90")
+		proxy(":8080", ":90")
 	},
 }
 
 func proxy(source string, target string) {
 	log.Info("TunnelMe Proxy")
-	ln, _ := net.Listen("tcp", source)
+	ln, err := net.Listen("tcp", target)
+	if err != nil {
+		log.Fatal(err)
+	}
 	// accept connection on port
 	for {
 		conn, _ := ln.Accept()
 		go func() {
-			clientConn, _ := net.Dial("tcp", target)
+			clientConn, err := net.Dial("tcp", source)
+			if err != nil {
+				log.Error(err)
+				conn.Close()
+				return
+			}
 			utils.Pipe(conn, clientConn)
 		}()
 	}
