@@ -21,14 +21,13 @@ var proxyCmd = &cobra.Command{
 }
 
 func proxyInit() {
-	proxyCmd.PersistentFlags().StringP("source", "s", "127.0.0.1:80", "Source Address")
-	proxyCmd.PersistentFlags().StringP("dest", "d", "0.0.0.0:90", "Destination Address")
+	proxyCmd.PersistentFlags().StringP("source", "s", "", "Source Address")
+	proxyCmd.MarkPersistentFlagRequired("source")
+	proxyCmd.PersistentFlags().StringP("dest", "d", "", "Destination Address")
+	proxyCmd.MarkPersistentFlagRequired("dest")
 
 	viper.BindPFlag("source", proxyCmd.PersistentFlags().Lookup("source"))
 	viper.BindPFlag("dest", proxyCmd.PersistentFlags().Lookup("dest"))
-
-	viper.SetDefault("source", "127.0.0.1:80")
-	viper.SetDefault("dest", "0.0.0.0:90")
 }
 
 func proxy(source string, target string) {
