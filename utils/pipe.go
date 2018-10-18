@@ -1,8 +1,9 @@
-package main
+package utils
 
 import "net"
 
-func pipe(conn1 net.Conn, conn2 net.Conn) {
+// Pipe two channels
+func Pipe(conn1 net.Conn, conn2 net.Conn) {
 	chan1 := getChannel(conn1)
 	chan2 := getChannel(conn2)
 	for {

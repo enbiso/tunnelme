@@ -1,4 +1,4 @@
-package main
+package cmd
 
 import (
 	"bufio"
@@ -7,7 +7,21 @@ import (
 	"net"
 	"strings"
 	"time"
+
+	log "github.com/sirupsen/logrus"
+	"github.com/spf13/cobra"
+
+	"github.com/enbiso/tunnelme/utils"
 )
+
+var serverCmd = &cobra.Command{
+	Use:   "server",
+	Short: "Execute tunneling server",
+	Long:  "Excute tunneling server. This has to be executed in a publicly accessible machine.",
+	Run: func(cmd *cobra.Command, args []string) {
+		NewServer().Start()
+	},
+}
 
 // Server data structure
 type Server struct {
@@ -40,7 +54,7 @@ func NewServer() *Server {
 // Start the server
 func (s Server) Start() {
 
-	log("TunnelMe Server")
+	log.Info("TunnelMe Server")
 	ctrlLn, _ := net.Listen("tcp", s.ControlAddr)
 	dataLn, _ := net.Listen("tcp", s.DataAddr)
 
@@ -48,14 +62,14 @@ func (s Server) Start() {
 		for {
 			dataConn, _ := dataLn.Accept()
 			remortID, _ := bufio.NewReader(dataConn).ReadString('\n')
-			log("Data connection accepted")
+			log.Debug("Data connection accepted")
 			s.dataConns[strings.TrimSuffix(remortID, "\n")] = dataConn
 		}
 	}()
 
 	for {
 		ctrlConn, _ := ctrlLn.Accept()
-		log("Tunnel client connected")
+		log.Debug("Tunnel client connected")
 
 		clientLn, _ := s.getRemoteListener()
 		fmt.Fprintf(ctrlConn, clientLn.Addr().String()+"\n")
@@ -63,14 +77,14 @@ func (s Server) Start() {
 		go func() {
 			for {
 				clientConn, _ := clientLn.Accept()
-				id := UUID()
+				id := utils.UUID()
 				fmt.Fprintf(ctrlConn, id+"\n")
 				for s.dataConns[id] == nil {
 					time.Sleep(200 * time.Millisecond)
 				}
 				dataConn := s.dataConns[id]
-				log("Consumer connected")
-				go pipe(clientConn, dataConn)
+				log.Debug("Consumer connected")
+				go utils.Pipe(clientConn, dataConn)
 			}
 		}()
 	}
