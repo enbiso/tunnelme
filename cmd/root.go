@@ -31,6 +31,7 @@ func init() {
 	rootCmd.AddCommand(versionCmd)
 	rootCmd.AddCommand(clientCmd)
 	rootCmd.AddCommand(proxyCmd)
+	proxyInit()
 	rootCmd.AddCommand(serverCmd)
 }
 
